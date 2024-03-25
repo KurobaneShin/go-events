@@ -25,9 +25,11 @@ func (e *TestEvent) GetDateTime() time.Time {
 	return time.Now()
 }
 
-type TestEventHandler struct{}
+type TestEventHandler struct {
+	ID int
+}
 
-func (h *TestEventHandler) Handle(event Event) {
+func (h *TestEventHandler) HandleEvent(event Event) {
 }
 
 type EventDispatcherTestSuite struct {
@@ -42,13 +44,26 @@ type EventDispatcherTestSuite struct {
 func (suite *EventDispatcherTestSuite) SetupTest() {
 	suite.event = TestEvent{name: "test", payload: "test"}
 	suite.event2 = TestEvent{name: "test2", payload: "test2"}
-	suite.handler = TestEventHandler{}
-	suite.handler2 = TestEventHandler{}
+	suite.handler = TestEventHandler{
+		ID: 1,
+	}
+	suite.handler2 = TestEventHandler{
+		ID: 2,
+	}
 	suite.dispatcher = NewEventDispatcher()
 }
 
 func (suite *EventDispatcherTestSuite) TestEventDispatcher_Register() {
-	assert.True(suite.T(), true)
+	err := suite.dispatcher.Register(suite.event.GetName(), &suite.handler)
+	assert.Nil(suite.T(), err)
+	assert.Equal(suite.T(), 1, len(suite.dispatcher.handlers[suite.event.GetName()]))
+
+	err = suite.dispatcher.Register(suite.event.GetName(), &suite.handler2)
+	assert.Nil(suite.T(), err)
+	assert.Equal(suite.T(), 2, len(suite.dispatcher.handlers[suite.event.GetName()]))
+
+	assert.Equal(suite.T(), &suite.handler, suite.dispatcher.handlers[suite.event.GetName()][0])
+	assert.Equal(suite.T(), &suite.handler2, suite.dispatcher.handlers[suite.event.GetName()][1])
 }
 
 func TestSuite(t *testing.T) {
