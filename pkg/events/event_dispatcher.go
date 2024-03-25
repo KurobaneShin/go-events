@@ -6,7 +6,7 @@ type EventDispatcher struct {
 	handlers map[string][]EventHandler
 }
 
-ErrAlreadyRegistered := errors.New("Handler already registered")
+var ErrAlreadyRegistered = errors.New("Handler already registered")
 
 func NewEventDispatcher() *EventDispatcher {
 	return &EventDispatcher{
