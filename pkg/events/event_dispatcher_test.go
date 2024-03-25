@@ -66,6 +66,15 @@ func (suite *EventDispatcherTestSuite) TestEventDispatcher_Register() {
 	assert.Equal(suite.T(), &suite.handler2, suite.dispatcher.handlers[suite.event.GetName()][1])
 }
 
+func (suite *EventDispatcherTestSuite) TestEventDispatcher_With_SameHandler() {
+	err := suite.dispatcher.Register(suite.event.GetName(), &suite.handler)
+	suite.Nil(err)
+	suite.Equal(1, len(suite.dispatcher.handlers[suite.event.GetName()]))
+
+	err = suite.dispatcher.Register(suite.event.GetName(), &suite.handler)
+	suite.Equal(ErrAlreadyRegistered, err)
+}
+
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(EventDispatcherTestSuite))
 }
