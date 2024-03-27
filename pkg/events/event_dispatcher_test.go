@@ -75,6 +75,24 @@ func (suite *EventDispatcherTestSuite) TestEventDispatcher_With_SameHandler() {
 	suite.Equal(ErrAlreadyRegistered, err)
 }
 
+func (suite *EventDispatcherTestSuite) TestEventDispatcher_Clear() {
+	err := suite.dispatcher.Register(suite.event.GetName(), &suite.handler)
+	suite.Nil(err)
+	suite.Equal(1, len(suite.dispatcher.handlers[suite.event.GetName()]))
+
+	err = suite.dispatcher.Register(suite.event.GetName(), &suite.handler2)
+	suite.Nil(err)
+	suite.Equal(2, len(suite.dispatcher.handlers[suite.event.GetName()]))
+
+	// event2
+	err = suite.dispatcher.Register(suite.event2.GetName(), &suite.handler)
+	suite.Nil(err)
+	suite.Equal(1, len(suite.dispatcher.handlers[suite.event2.GetName()]))
+
+	suite.dispatcher.Clear()
+	suite.Equal(0, len(suite.dispatcher.handlers[suite.event.GetName()]))
+}
+
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(EventDispatcherTestSuite))
 }
