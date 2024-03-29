@@ -31,3 +31,15 @@ func (eventDispatcher *EventDispatcher) Register(eventName string, handler Event
 func (eventDispatcher *EventDispatcher) Clear() {
 	eventDispatcher.handlers = make(map[string][]EventHandler)
 }
+
+func (eventDispatcher *EventDispatcher) Has(eventName string, handler EventHandler) bool {
+	if _, ok := eventDispatcher.handlers[eventName]; ok {
+		for _, registeredHandler := range eventDispatcher.handlers[eventName] {
+			if registeredHandler == handler {
+				return true
+			}
+		}
+	}
+
+	return false
+}

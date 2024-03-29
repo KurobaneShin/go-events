@@ -93,6 +93,20 @@ func (suite *EventDispatcherTestSuite) TestEventDispatcher_Clear() {
 	suite.Equal(0, len(suite.dispatcher.handlers[suite.event.GetName()]))
 }
 
+func (suite *EventDispatcherTestSuite) TestEventDispatcher_Has() {
+	err := suite.dispatcher.Register(suite.event.GetName(), &suite.handler)
+	suite.Nil(err)
+	suite.Equal(1, len(suite.dispatcher.handlers[suite.event.GetName()]))
+
+	err = suite.dispatcher.Register(suite.event.GetName(), &suite.handler2)
+	suite.Nil(err)
+	suite.Equal(2, len(suite.dispatcher.handlers[suite.event.GetName()]))
+
+	suite.True(suite.dispatcher.Has(suite.event.GetName(), &suite.handler))
+
+	suite.True(suite.dispatcher.Has(suite.event.GetName(), &suite.handler2))
+}
+
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(EventDispatcherTestSuite))
 }
