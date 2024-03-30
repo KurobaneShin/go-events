@@ -37,6 +37,19 @@ func (eventDispatcher *EventDispatcher) Register(eventName string, handler Event
 	return nil
 }
 
+func (eventDispatcher *EventDispatcher) Unregister(eventName string, handler EventHandler) error {
+	if _, ok := eventDispatcher.handlers[eventName]; ok {
+		for i, registeredEvent := range eventDispatcher.handlers[eventName] {
+			if registeredEvent == handler {
+				eventDispatcher.handlers[eventName] = append(eventDispatcher.handlers[eventName][:i], eventDispatcher.handlers[eventName][i+1:]...)
+				return nil
+			}
+		}
+	}
+
+	return nil
+}
+
 func (eventDispatcher *EventDispatcher) Clear() {
 	eventDispatcher.handlers = make(map[string][]EventHandler)
 }
