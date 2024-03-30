@@ -14,6 +14,15 @@ func NewEventDispatcher() *EventDispatcher {
 	}
 }
 
+func (eventDispatcher *EventDispatcher) Dispatch(event Event) error {
+	if handlers, ok := eventDispatcher.handlers[event.GetName()]; ok {
+		for _, handler := range handlers {
+			handler.HandleEvent(event)
+		}
+	}
+	return nil
+}
+
 func (eventDispatcher *EventDispatcher) Register(eventName string, handler EventHandler) error {
 	if _, ok := eventDispatcher.handlers[eventName]; ok {
 		for _, registeredEvent := range eventDispatcher.handlers[eventName] {
