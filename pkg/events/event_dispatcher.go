@@ -1,6 +1,9 @@
 package events
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 type EventDispatcher struct {
 	handlers map[string][]EventHandler
@@ -16,9 +19,12 @@ func NewEventDispatcher() *EventDispatcher {
 
 func (eventDispatcher *EventDispatcher) Dispatch(event Event) error {
 	if handlers, ok := eventDispatcher.handlers[event.GetName()]; ok {
+		wg := &sync.WaitGroup{}
+		wg.Add(len(handlers))
 		for _, handler := range handlers {
-			handler.HandleEvent(event)
+			go handler.HandleEvent(event, wg)
 		}
+		wg.Wait()
 	}
 	return nil
 }
